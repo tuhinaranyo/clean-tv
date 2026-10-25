@@ -159,6 +159,10 @@ public class LauncherActivity extends Activity {
         }
 
         void tick() {
+            if (Th.refresh(getContext())) {
+                LauncherActivity.this.getWindow().setBackgroundDrawable(new ColorDrawable(Th.c(0xFF0F0F0F)));
+                reload();
+            }
             invalidate();
             ui.postDelayed(new Runnable() { public void run() { tick(); } }, 20000);
         }
