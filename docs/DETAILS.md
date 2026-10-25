@@ -11,13 +11,13 @@ A flat dark (or light) launcher, native Settings, a clock and 7-day weather scre
 4. Optional: edit `launcher/app/src/main/res/values/config.xml` first (dock apps, hidden apps, your own movie servers). Servers can also be added on the TV in Settings > Servers.
 5. When done, turn USB debugging and Network debugging off.
 
-**Only the launcher is portable.** The debloat lists in `backup/` (`disabled.txt`, `restore.sh`) are for the Mi TV 4 only. Do not disable packages on another model without checking them. Everything is reversible with `pm enable`. The weather location is hard-coded to Dhaka in `ClockDream.java`; change the latitude and longitude there. The default movie servers in `config.xml` are Bangladeshi public FTP indexes; replace them with your own. Use at your own risk; no warranty.
+**Only the launcher is portable.** The debloat lists in `mitv4/backup/` (`disabled.txt`, `restore.sh`) are for the Mi TV 4 only. Do not disable packages on another model without checking them. Everything is reversible with `pm enable`. The weather location is hard-coded to Dhaka in `ClockDream.java`; change the latitude and longitude there. The default movie servers in `config.xml` are Bangladeshi public FTP indexes; replace them with your own. Use at your own risk; no warranty.
 
 ## Details (Mi TV 4 build)
 Nothing was uninstalled; every change is reversible.
 
 ## Layout
-- `backup/` – package lists, getprop, settings, `restore.sh` (re-enables everything that was disabled).
+- `mitv4/backup/` – package lists, getprop, settings, `restore.sh` (re-enables everything that was disabled).
 - `launcher/` – the native Java launcher (`app.cleanyourtv.launcher`). It is one Canvas-drawn view, with no libraries (not even RecyclerView).
 - `build.sh` / `install.sh` – build the APK, install it and set it as Home.
 - `tools/` – `tv.py` (ADB over Wi-Fi), `disable.py`, `install.py`. Set `TV_HOST` for a different IP.
@@ -25,8 +25,8 @@ Nothing was uninstalled; every change is reversible.
 
 ## Re-enable an app
 One app: `adb shell pm enable <package>`
-Everything: `backup/restore.sh`
-The list of disabled apps is in `backup/disabled.txt`. To get the stock launcher back, run `pm enable com.google.android.tvlauncher`, then `pm disable-user --user 0 app.cleanyourtv.launcher` (or just clear the home default in Settings).
+Everything: `mitv4/backup/restore.sh`
+The list of disabled apps is in `mitv4/backup/disabled.txt`. To get the stock launcher back, run `pm enable com.google.android.tvlauncher`, then `pm disable-user --user 0 app.cleanyourtv.launcher` (or just clear the home default in Settings).
 
 ## Change the dock, columns or hidden apps
 Edit `launcher/app/src/main/res/values/config.xml`:
@@ -49,7 +49,7 @@ The first two dock tiles open a built-in browser for the h5ai index pages in `co
 
 ## Speed tweaks
 
-System animations are set to 0.5x and about 25 more vendor packages are disabled (all listed in `backup/disabled.txt`). `backup/restore.sh` undoes everything. Three helper packages (`leanbacklauncher`, its recommendations, `tvrecommendations`) get re-enabled by the system at boot; they are harmless and the launcher ignores them.
+System animations are set to 0.5x and about 25 more vendor packages are disabled (all listed in `mitv4/backup/disabled.txt`). `mitv4/backup/restore.sh` undoes everything. Three helper packages (`leanbacklauncher`, its recommendations, `tvrecommendations`) get re-enabled by the system at boot; they are harmless and the launcher ignores them.
 
 ## Notes
 - Three launcher helper packages (`leanbacklauncher`, its recommendations and `tvrecommendations`) get re-enabled by the system at boot. They do nothing without the stock launcher.
@@ -99,7 +99,7 @@ Revert to Google's: `settings put secure screensaver_components com.google.andro
 Test quickly: set `settings put system screen_off_timeout 15000`, go Home and wait about 30 s; then put it back to 300000.
 
 ## Voice search
-A custom voice screen is not possible: the Mic button launches Google's Assistant (Katniss), which draws its own overlay. `restore-voice.sh` puts Google's setup back (already applied). The unused Voice* classes in the launcher can be ignored.
+A custom voice screen is not possible: the Mic button launches Google's Assistant (Katniss), which draws its own overlay. `mitv4/restore-voice.sh` puts Google's setup back (already applied). The unused Voice* classes in the launcher can be ignored.
 
 ## Home tiles
 YouTube and YouTube Music show icon-only tiles. Tile art is cached. `install.sh` also force-stops stale launcher tasks before starting.

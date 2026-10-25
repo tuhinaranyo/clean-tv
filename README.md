@@ -12,7 +12,7 @@
 
 **[Download CleanTV.apk](https://github.com/tuhinaranyo/clean-tv/raw/main/release/CleanTV.apk)** (131 KB, Android 8+)
 
-SHA-256: `a462c575d9e65c9a5ec7a6a3022110effca6f3774a23b73dd1c3a579b9ab5d34`
+SHA-256: `1b207f3de51eb63af3714f5912677546484fe974a483cb701c19b833b07c614d`
 
 ## Why
 
@@ -59,8 +59,8 @@ Needs JDK 17 and the Android SDK (platform android-34, build-tools 34.0.0). No G
 Set `TV_HOST=<tv-ip>` for a different TV.
 
 ## Good to know
-- Built and tested on a Xiaomi Mi TV 4 (Android 9). The launcher should work on any Android TV with Android 8 or newer.
-- The debloat lists in `backup/` are for the Mi TV 4 only. Nothing is uninstalled and everything is reversible (`backup/restore.sh`). Do not disable packages on another model without checking them.
+- Built and tested on a Xiaomi Mi TV 4 (Android 9). Tried it on another TV? [Tell us if it works](https://github.com/tuhinaranyo/clean-tv/issues/new?template=tested-on.md). The launcher should work on any Android TV with Android 8 or newer.
+- The debloat lists in `mitv4/` are for the Mi TV 4 only. Nothing is uninstalled and everything is reversible (`mitv4/backup/restore.sh`). Do not disable packages on another model without checking them.
 - The weather location defaults to Dhaka. Change the latitude and longitude in `ClockDream.java`.
 - The default movie servers are public Bangladeshi FTP indexes. Replace them with your own.
 - Use at your own risk, no warranty (MIT licence).

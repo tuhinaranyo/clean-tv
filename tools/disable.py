@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""disable.py pkg... : pm disable-user one package per call, logs to backup/disabled.txt, rewrites backup/restore.sh"""
+"""disable.py pkg... : pm disable-user one package per call, logs to mitv4/backup/disabled.txt, rewrites mitv4/backup/restore.sh"""
 import sys, os, re
 sys.path.insert(0, os.path.dirname(__file__))
 import tv
 DENY = re.compile(r"^(android|com\.android\.(permissioncontroller|packageinstaller|ext\.services|ext\.shared|systemui|shell|phone|settings|tv\.settings|providers\..*|inputdevices|bluetooth)|com\.google\.android\.(permissioncontroller|packageinstaller|ext\.services|ext\.shared|gms|gsf|overlay\.modules.*|inputmethod\.latin|tv\.remote\.service)|com\.android\.vending|mitv\.service|com\.mediatek\.(tvinput|wwtv\.tvcenter|tv\..*|tvinputservice.*|hotkey.*)|mediatek\.factorymenu\.ui)$")
-root = os.path.join(os.path.dirname(__file__), "..", "backup")
+root = os.path.join(os.path.dirname(__file__), "..", "mitv4", "backup")
 log = os.path.join(root, "disabled.txt")
 d = tv.connect()
 done = set(open(log).read().split()) if os.path.exists(log) else set()

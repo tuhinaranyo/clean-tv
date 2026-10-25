@@ -26,7 +26,7 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent>
     </queries>
-    <application android:label="Home" android:theme="@style/Theme.Home" android:allowBackup="false" android:usesCleartextTraffic="true">
+    <application android:label="Clean TV" android:theme="@style/Theme.Home" android:allowBackup="false" android:usesCleartextTraffic="true">
         <activity android:name=".SettingsActivity" android:exported="false" android:screenOrientation="landscape" android:theme="@style/Theme.Home" />
         <activity android:name=".PageActivity" android:exported="false" android:screenOrientation="landscape" android:theme="@style/Theme.Home" />
         <activity android:name=".ServersActivity" android:exported="false" android:screenOrientation="landscape" android:theme="@style/Theme.Home" />

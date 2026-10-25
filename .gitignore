@@ -5,8 +5,8 @@ launcher/build/
 *.keystore
 *.jks
 .DS_Store
-backup/getprop.txt
-backup/settings_*.txt
-backup/usb_net.txt
-backup/display.txt
-backup/home_claimants.txt
+mitv4/backup/getprop.txt
+mitv4/backup/settings_*.txt
+mitv4/backup/usb_net.txt
+mitv4/backup/display.txt
+mitv4/backup/home_claimants.txt
