@@ -1,0 +1,5 @@
+package:com.tcl.browser
+package:com.sonyliv
+package:in.startv.hotstar
+package:com.mitv.tvhome.mitvplus
+package:com.mitv.tvhome.oemtab

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dock slots and grid columns (4-7). -->
+    <integer name="columns">4</integer>
+    <!-- Dock apps in order. Package names, or ftp:N for an entry of ftp_servers. Missing ones are skipped. -->
+    <string-array name="dock_apps">
+        <item>com.google.android.youtube.tv</item>
+        <item>com.google.android.youtube.tvmusic</item>
+    </string-array>
+    <!-- Movie folders served over plain web directory listings: "Label|URL". They open in the built-in browser and play in VLC. -->
+    <string-array name="ftp_servers">
+        <item>Games - Server 1|https://server1.ftpbd.net/FTP-1/</item>
+        <item>Movies - Server 2|https://server2.ftpbd.net/FTP-2/</item>
+        <item>Movies - Server 3|https://server3.ftpbd.net/FTP-3/</item>
+        <item>Movies - Server 4|https://server4.ftpbd.net/FTP-4/</item>
+    </string-array>
+    <!-- Never shown in the grid. -->
+    <string-array name="hidden_apps">
+        <item>com.xiaomi.mitv.mediaexplorer</item>
+        <item>com.mitv.videoplayer</item>
+        <item>com.android.tv.settings</item>
+        <item>com.google.android.tvlauncher</item>
+        <item>com.google.android.leanbacklauncher</item>
+        <item>com.mediatek.wwtv.setupwizard</item>
+        <item>com.mediatek.wwtv.tvcenter</item>
+        <item>org.videolan.vlc</item>
+        <item>com.android.vending</item>
+    </string-array>
+</resources>

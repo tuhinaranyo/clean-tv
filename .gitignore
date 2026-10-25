@@ -1,0 +1,12 @@
+venv/
+toolchain/
+shots/
+launcher/build/
+*.keystore
+*.jks
+.DS_Store
+backup/getprop.txt
+backup/settings_*.txt
+backup/usb_net.txt
+backup/display.txt
+backup/home_claimants.txt
