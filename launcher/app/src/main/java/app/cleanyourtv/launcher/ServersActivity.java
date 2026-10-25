@@ -123,8 +123,8 @@ public class ServersActivity extends Activity {
         public boolean onKeyDown(int k, KeyEvent e) {
             int n = list.size() + 1;
             switch (k) {
-                case KeyEvent.KEYCODE_DPAD_UP: if (sel > 0) sel--; break;
-                case KeyEvent.KEYCODE_DPAD_DOWN: if (sel < n - 1) sel++; break;
+                case KeyEvent.KEYCODE_DPAD_UP: sel = sel > 0 ? sel - 1 : n - 1; break;
+                case KeyEvent.KEYCODE_DPAD_DOWN: sel = sel < n - 1 ? sel + 1 : 0; break;
                 case KeyEvent.KEYCODE_DPAD_CENTER:
                 case KeyEvent.KEYCODE_ENTER:
                 case KeyEvent.KEYCODE_NUMPAD_ENTER:

@@ -827,7 +827,17 @@ public class PageActivity extends Activity {
             int a = sel + d;
             while (a >= 0 && a < rows.size() && !selectable(a)) a += d;
             if (a >= 0 && a < rows.size()) { sel = a; off = 0; }
-            else off = Math.max(-4000 * U, Math.min(4000 * U, off + d * 320 * U));
+            else if (d > 0 && target() < maxScroll() - 1) off = Math.min(4000 * U, off + 320 * U);
+            else if (d < 0 && target() > 0.5f) off = Math.max(-4000 * U, off - 320 * U);
+            else {
+                a = d > 0 ? 0 : rows.size() - 1;
+                while (a >= 0 && a < rows.size() && !selectable(a)) a -= d;
+                if (a >= 0 && a < rows.size()) { sel = a; off = 0; }
+            }
+        }
+        float maxScroll() {
+            int n = rows.size();
+            return n == 0 ? 0 : Math.max(0, ys[n - 1] + hs[n - 1] - (getHeight() - 60 * U));
         }
 
         @Override

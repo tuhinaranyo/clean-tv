@@ -29,11 +29,14 @@ import java.util.regex.Pattern;
 
 public class FtpActivity extends Activity {
     static final String[] VIDEO = {"mkv", "mp4", "avi", "mov", "m4v", "ts", "webm", "wmv", "flv", "mpg", "mpeg", "m2ts", "3gp", "vob"};
+    static final Pattern ISO = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})[ T](\\d{2}):(\\d{2})");
+    static final Pattern NGX = Pattern.compile("(\\d{1,2})-([A-Za-z]{3})-(\\d{4}) (\\d{2}):(\\d{2})");
     static final Pattern HREF = Pattern.compile("href=\"([^\"#?]+)\"");
 
     static class Item {
         String name, url;
-        boolean dir;
+        boolean dir, sortRow;
+        long date;
     }
 
     private Lister view;
@@ -73,6 +76,7 @@ public class FtpActivity extends Activity {
         final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
         final RectF tmp = new RectF();
         final Typeface thin, light, reg;
+        List<Item> raw = new ArrayList<>();
         List<Item> items = new ArrayList<>();
         String title = "", status = "Loading…";
         int sel;
@@ -129,9 +133,11 @@ public class FtpActivity extends Activity {
                     post(new Runnable() {
                         public void run() {
                             if (my != token) return;
-                            items = res;
+                            raw = res;
+                            items = build();
                             status = fe == null ? "" : fe;
                             sel = Math.max(0, Math.min(restore, items.size() - 1));
+                            if (restore == 0 && items.size() > 1) sel = 1;
                             hy = rowY(sel); hv = 0;
                             scroll = target(); sv = 0;
                             invalidate();
@@ -139,6 +145,50 @@ public class FtpActivity extends Activity {
                     });
                 }
             }).start();
+        }
+
+        final String[] SORTS = {"Default", "Name A to Z", "Name Z to A", "Newest first", "Oldest first"};
+        int mode = getSharedPreferences("ftp", 0).getInt("sort", 0);
+
+        List<Item> build() {
+            List<Item> l = new ArrayList<>(raw);
+            if (mode == 1 || mode == 2) {
+                java.util.Collections.sort(l, new java.util.Comparator<Item>() {
+                    public int compare(Item a, Item b) { return String.CASE_INSENSITIVE_ORDER.compare(a.name, b.name) * (mode == 1 ? 1 : -1); }
+                });
+            } else if (mode == 3 || mode == 4) {
+                java.util.Collections.sort(l, new java.util.Comparator<Item>() {
+                    public int compare(Item a, Item b) {
+                        int c = a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+                        return mode == 3 ? -c : c;
+                    }
+                });
+            }
+            if (raw.size() > 1) {
+                Item h = new Item();
+                h.sortRow = true;
+                h.name = "Sort:  " + SORTS[mode];
+                l.add(0, h);
+            }
+            return l;
+        }
+
+        void cycleSort() {
+            mode = (mode + 1) % SORTS.length;
+            getSharedPreferences("ftp", 0).edit().putInt("sort", mode).apply();
+            items = build();
+            sel = 0;
+        }
+
+        long parseDate(String t) {
+            Matcher a = ISO.matcher(t);
+            if (a.find()) return Long.parseLong(a.group(1) + a.group(2) + a.group(3) + a.group(4) + a.group(5));
+            Matcher b = NGX.matcher(t);
+            if (b.find()) {
+                int mo = "janfebmaraprmayjunjulaugsepoctnovdec".indexOf(b.group(2).toLowerCase()) / 3 + 1;
+                return Long.parseLong(b.group(3)) * 100000000L + mo * 1000000L + Long.parseLong(b.group(1)) * 10000L + Long.parseLong(b.group(4)) * 100 + Long.parseLong(b.group(5));
+            }
+            return 0;
         }
 
         void parse(String base, String html, List<Item> out) throws Exception {
@@ -160,6 +210,10 @@ public class FtpActivity extends Activity {
                 it.url = full;
                 it.dir = sl >= 0;
                 it.name = Uri.decode(it.dir ? rest.substring(0, rest.length() - 1) : rest);
+                int e = Math.min(html.length(), m.end() + 400);
+                int nx = html.indexOf("href=", m.end());
+                if (nx > 0 && nx < e) e = nx;
+                it.date = parseDate(html.substring(m.end(), e));
                 if (it.dir) dirs.add(it);
                 else if (isVideo(it.name)) files.add(it);
             }
@@ -182,8 +236,8 @@ public class FtpActivity extends Activity {
         @Override
         public boolean onKeyDown(int k, KeyEvent e) {
             switch (k) {
-                case KeyEvent.KEYCODE_DPAD_UP: if (sel > 0) sel--; break;
-                case KeyEvent.KEYCODE_DPAD_DOWN: if (sel < items.size() - 1) sel++; break;
+                case KeyEvent.KEYCODE_DPAD_UP: if (!items.isEmpty()) sel = sel > 0 ? sel - 1 : items.size() - 1; break;
+                case KeyEvent.KEYCODE_DPAD_DOWN: if (!items.isEmpty()) sel = sel < items.size() - 1 ? sel + 1 : 0; break;
                 case KeyEvent.KEYCODE_PAGE_UP:
                 case KeyEvent.KEYCODE_DPAD_LEFT: sel = Math.max(0, sel - 8); break;
                 case KeyEvent.KEYCODE_PAGE_DOWN:
@@ -193,6 +247,7 @@ public class FtpActivity extends Activity {
                 case KeyEvent.KEYCODE_NUMPAD_ENTER:
                     if (e.getRepeatCount() > 0 || items.isEmpty()) return true;
                     Item it = items.get(sel);
+                    if (it.sortRow) { cycleSort(); break; }
                     if (it.dir) {
                         sels.add(sel);
                         stack.add(it.url);
@@ -240,7 +295,7 @@ public class FtpActivity extends Activity {
             p.setTypeface(light);
             p.setTextSize(30 * U);
             p.setColor(0x99FFFFFF);
-            c.drawText(items.isEmpty() ? status : (items.size() + " items   ·   Back goes up a folder"), 98 * U, 250 * U, p);
+            c.drawText(items.isEmpty() ? status : ((raw.size()) + " items   ·   Back goes up a folder"), 98 * U, 250 * U, p);
 
             c.save();
             c.clipRect(0, 270 * U, getWidth(), getHeight());
@@ -264,7 +319,14 @@ public class FtpActivity extends Activity {
                 c.drawText(n.equals(it.name) ? n : n + "…", 112 * U, y + 56 * U, p);
                 p.setTextAlign(Paint.Align.RIGHT);
                 p.setColor(i == sel ? 0xFF0F0F0F : 0x88FFFFFF);
+                if (it.sortRow) { c.drawText("OK to change", 1832 * U, y + 56 * U, p); continue; }
                 c.drawText(it.dir ? "›" : "▶", 1832 * U, y + 56 * U, p);
+                if (it.date > 0) {
+                    String d = String.valueOf(it.date);
+                    p.setTextSize(26 * U);
+                    c.drawText(d.substring(0, 4) + "-" + d.substring(4, 6) + "-" + d.substring(6, 8), 1780 * U, y + 54 * U, p);
+                    p.setTextSize(38 * U);
+                }
             }
             c.restore();
             if (run) postInvalidateOnAnimation();

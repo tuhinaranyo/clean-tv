@@ -450,8 +450,8 @@ public class LauncherActivity extends Activity {
             }
             if (sec == RAIL) {
                 switch (k) {
-                    case KeyEvent.KEYCODE_DPAD_UP: if (rail > 0) rail--; break;
-                    case KeyEvent.KEYCODE_DPAD_DOWN: if (rail < RAILY.length - 1) rail++; break;
+                    case KeyEvent.KEYCODE_DPAD_UP: rail = rail > 0 ? rail - 1 : RAILY.length - 1; break;
+                    case KeyEvent.KEYCODE_DPAD_DOWN: rail = rail < RAILY.length - 1 ? rail + 1 : 0; break;
                     case KeyEvent.KEYCODE_DPAD_RIGHT: if (!rows.isEmpty()) sec = CONTENT; break;
                     case KeyEvent.KEYCODE_DPAD_LEFT: break;
                     case KeyEvent.KEYCODE_DPAD_CENTER:
@@ -477,10 +477,10 @@ public class LauncherActivity extends Activity {
                     if (col < rows.get(row).size() - 1) col++;
                     break;
                 case KeyEvent.KEYCODE_DPAD_UP:
-                    if (row > 0) { row--; col = Math.min(col, rows.get(row).size() - 1); }
+                    { row = row > 0 ? row - 1 : rows.size() - 1; col = Math.min(col, rows.get(row).size() - 1); }
                     break;
                 case KeyEvent.KEYCODE_DPAD_DOWN:
-                    if (row < rows.size() - 1) { row++; col = Math.min(col, rows.get(row).size() - 1); }
+                    { row = row < rows.size() - 1 ? row + 1 : 0; col = Math.min(col, rows.get(row).size() - 1); }
                     break;
                 case KeyEvent.KEYCODE_DPAD_CENTER:
                 case KeyEvent.KEYCODE_ENTER:

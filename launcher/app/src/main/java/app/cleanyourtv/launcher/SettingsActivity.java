@@ -97,8 +97,8 @@ public class SettingsActivity extends Activity {
 
         @Override
         public boolean onKeyDown(int k, KeyEvent e) {
-            if (k == KeyEvent.KEYCODE_DPAD_UP) { if (sel > 0) sel--; }
-            else if (k == KeyEvent.KEYCODE_DPAD_DOWN) { if (sel < ROWS.length - 1) sel++; }
+            if (k == KeyEvent.KEYCODE_DPAD_UP) { sel = sel > 0 ? sel - 1 : ROWS.length - 1; }
+            else if (k == KeyEvent.KEYCODE_DPAD_DOWN) { sel = sel < ROWS.length - 1 ? sel + 1 : 0; }
             else if (k == KeyEvent.KEYCODE_DPAD_CENTER || k == KeyEvent.KEYCODE_ENTER) {
                 if (e.getRepeatCount() == 0) open(ROWS[sel][2]);
             } else return super.onKeyDown(k, e);
