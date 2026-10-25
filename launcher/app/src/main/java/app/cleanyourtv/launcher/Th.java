@@ -23,6 +23,11 @@ final class Th {
         int m = mode(c);
         int h = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         boolean l = m == 2 || (m == 0 && h >= 7 && h < 18);
+        SharedPreferences sp = c.getSharedPreferences("theme", 0);
+        if (m == 0) {
+            if (android.os.SystemClock.elapsedRealtime() < 120000) l = sp.getBoolean("last", l);
+            else sp.edit().putBoolean("last", l).apply();
+        }
         boolean changed = l != light;
         light = l;
         try {

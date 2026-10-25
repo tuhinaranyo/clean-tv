@@ -458,7 +458,7 @@ public class PageActivity extends Activity {
 
     void buildDev() {
         final boolean dev = gInt("development_settings_enabled", 0) == 1;
-        toggle("Developer options", "Show advanced options", dev, new Runnable() { public void run() { gPut("development_settings_enabled", dev ? 0 : 1); } });
+        toggle("Developer options", "Show advanced options", dev, new Runnable() { public void run() { gPut("development_settings_enabled", dev ? 0 : 1); if (dev) { gPut("adb_enabled", 0); gPut("adb_wifi_enabled", 0); } } });
         final boolean adb = gInt("adb_enabled", 0) == 1;
         toggle("USB debugging", "Lets a computer on this network control the TV", adb, new Runnable() { public void run() {
             if (adb) ask("Turn off debugging?", "You will not be able to connect from a computer until it is turned on again.", "Turn off", new Runnable() { public void run() { gPut("adb_enabled", 0); } });
@@ -808,12 +808,20 @@ public class PageActivity extends Activity {
             if (!selectable(sel)) { int a = sel; while (a < n && !selectable(a)) a++; if (a >= n) { a = sel; while (a >= 0 && !selectable(a)) a--; } sel = Math.max(0, a); }
         }
 
-        float target() { return rows.isEmpty() ? 0 : Math.max(0, ys[sel] - 520 * U); }
+        float off;
+
+        float target() {
+            if (rows.isEmpty()) return 0;
+            int n = rows.size();
+            float max = Math.max(0, ys[n - 1] + hs[n - 1] - (getHeight() - 60 * U));
+            return Math.max(0, Math.min(Math.max(max, ys[sel] - 520 * U), ys[sel] - 520 * U + off));
+        }
 
         void move(int d) {
             int a = sel + d;
             while (a >= 0 && a < rows.size() && !selectable(a)) a += d;
-            if (a >= 0 && a < rows.size()) sel = a;
+            if (a >= 0 && a < rows.size()) { sel = a; off = 0; }
+            else off = Math.max(-4000 * U, Math.min(4000 * U, off + d * 320 * U));
         }
 
         @Override
