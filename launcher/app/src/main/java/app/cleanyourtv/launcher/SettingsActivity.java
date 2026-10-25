@@ -18,7 +18,7 @@ import android.view.WindowManager;
 
 public class SettingsActivity extends Activity {
     static final String TV = "com.android.tv.settings";
-    static final String[][] ROWS = {
+    static final String[][] ALL = {
         {"Network & Wi-Fi", "Connect to a network", "p:wifi"},
         {"Bluetooth & remotes", "Pair a remote, headphones or gamepad", "p:bt"},
         {"Servers", "Add, hide or edit your movie servers", "servers"},
@@ -36,9 +36,20 @@ public class SettingsActivity extends Activity {
         {"About", "Device name, version and network", "p:about"},
     };
 
+    static String[][] ROWS = ALL;
+
+    static void filter(Context c) {
+        boolean dev = false;
+        try { dev = Settings.Global.getInt(c.getContentResolver(), "development_settings_enabled", 0) == 1; } catch (Throwable ignored) { }
+        java.util.List<String[]> l = new java.util.ArrayList<>();
+        for (String[] r : ALL) if (dev || !r[2].equals("p:dev")) l.add(r);
+        ROWS = l.toArray(new String[0][]);
+    }
+
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
+        filter(this);
         Th.refresh(this);
         getWindow().setBackgroundDrawable(new ColorDrawable(Th.c(0xFF0F0F0F)));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -48,6 +59,7 @@ public class SettingsActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        filter(this);
         Th.refresh(this);
         getWindow().getDecorView().invalidate();
     }

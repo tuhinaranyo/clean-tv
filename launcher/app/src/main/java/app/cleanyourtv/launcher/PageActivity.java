@@ -102,6 +102,7 @@ public class PageActivity extends Activity {
         }
     };
     String wifiNote = "";
+    int buildTaps;
     int startSel = -1;
     final List<BluetoothDevice> btFound = new ArrayList<>();
     BluetoothAdapter bt = BluetoothAdapter.getDefaultAdapter();
@@ -458,7 +459,7 @@ public class PageActivity extends Activity {
 
     void buildDev() {
         final boolean dev = gInt("development_settings_enabled", 0) == 1;
-        toggle("Developer options", "Show advanced options", dev, new Runnable() { public void run() { gPut("development_settings_enabled", dev ? 0 : 1); if (dev) { gPut("adb_enabled", 0); gPut("adb_wifi_enabled", 0); } } });
+        toggle("Developer options", "Show advanced options", dev, new Runnable() { public void run() { gPut("development_settings_enabled", dev ? 0 : 1); if (dev) { gPut("adb_enabled", 0); gPut("adb_wifi_enabled", 0); finish(); } } });
         final boolean adb = gInt("adb_enabled", 0) == 1;
         toggle("USB debugging", "Lets a computer on this network control the TV", adb, new Runnable() { public void run() {
             if (adb) ask("Turn off debugging?", "You will not be able to connect from a computer until it is turned on again.", "Turn off", new Runnable() { public void run() { gPut("adb_enabled", 0); } });
@@ -511,7 +512,12 @@ public class PageActivity extends Activity {
         info("Manufacturer", Build.MANUFACTURER);
         info("Android version", Build.VERSION.RELEASE);
         info("Security patch", Build.VERSION.SECURITY_PATCH);
-        info("Build", Build.DISPLAY);
+        Row bn = row(ACTION, "Build", "Press OK 7 times to show Developer options", Build.DISPLAY);
+        bn.act = new Runnable() { public void run() {
+            if (gInt("development_settings_enabled", 0) == 1) { android.widget.Toast.makeText(PageActivity.this, "Developer options is already on", android.widget.Toast.LENGTH_SHORT).show(); return; }
+            if (++buildTaps >= 7) { gPut("development_settings_enabled", 1); buildTaps = 0; android.widget.Toast.makeText(PageActivity.this, "Developer options is now on", android.widget.Toast.LENGTH_SHORT).show(); }
+            else android.widget.Toast.makeText(PageActivity.this, (7 - buildTaps) + " more presses to turn on Developer options", android.widget.Toast.LENGTH_SHORT).show();
+        } };
         info("Kernel", System.getProperty("os.version"));
         info("Uptime", (SystemClock.elapsedRealtime() / 3600000) + " h " + (SystemClock.elapsedRealtime() / 60000 % 60) + " min");
         header("Network");
@@ -520,7 +526,7 @@ public class PageActivity extends Activity {
         header("Launcher");
         try {
             PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
-            info("Version", pi.versionName);
+            info("Version", pi.versionName != null ? pi.versionName : "1.0");
         } catch (Throwable ignored) { }
     }
 
